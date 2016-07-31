@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMatchDialog.Sample", "BestMatchDialog.Sample\BestMatchDialog.Sample.csproj", "{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMatchDialog", "BestMatchDialog\BestMatchDialog.csproj", "{5B3F1267-18B6-4966-87EB-0D85C308FB1A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B3F1267-18B6-4966-87EB-0D85C308FB1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B3F1267-18B6-4966-87EB-0D85C308FB1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B3F1267-18B6-4966-87EB-0D85C308FB1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B3F1267-18B6-4966-87EB-0D85C308FB1A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
