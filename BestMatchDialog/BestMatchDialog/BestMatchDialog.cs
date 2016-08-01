@@ -5,8 +5,8 @@
 // Gary Pretty Github:
 // https://github.com/GaryPretty
 // 
-// Copyright (c) Microsoft Corporation
-// All rights reserved.
+// Code derived from existing dialogs within the Microsoft Bot Framework
+// https://github.com/Microsoft/BotBuilder
 // 
 // MIT License:
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,11 +33,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using Chronic;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using Microsoft.Bot.Builder.Internals.Fibers;
 
 namespace BestMatchDialog
 {
@@ -48,11 +47,6 @@ namespace BestMatchDialog
         protected Dictionary<BestMatchAttribute, BestMatchHandler> HandlerByBestMatchLists;
 
         protected string InitialMessage;
-
-        public BestMatchDialog()
-        {
-            var type = this.GetType();
-        }
 
         public virtual async Task StartAsync(IDialogContext context)
         {
@@ -75,9 +69,9 @@ namespace BestMatchDialog
 
         private async Task HandleMessage(IDialogContext context, string messageText)
         {
-            if (this.HandlerByBestMatchLists == null)
+            if (HandlerByBestMatchLists == null)
             {
-                this.HandlerByBestMatchLists =
+                HandlerByBestMatchLists =
                     new Dictionary<BestMatchAttribute, BestMatchHandler>(GetHandlersByBestMatchLists());
             }
 
@@ -120,10 +114,10 @@ namespace BestMatchDialog
             return EnumerateHandlers(this).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private StringMatch FindBestMatch(IEnumerable<string> choices, string utterance, double threshold = 0.5, bool ignoreCase = true, bool ignoreAlphanumeric = true)
+        private static StringMatch FindBestMatch(IEnumerable<string> choices, string utterance, double threshold = 0.5, bool ignoreCase = true, bool ignoreNonAlphanumeric = true)
         {
             StringMatch bestMatch = null;
-            var matches = FindAllMatches(choices, utterance, threshold, ignoreCase, ignoreAlphanumeric);
+            var matches = FindAllMatches(choices, utterance, threshold, ignoreCase, ignoreNonAlphanumeric);
             foreach (var match in matches)
             {
                 if (bestMatch == null || match.Score > bestMatch.Score)
@@ -134,33 +128,35 @@ namespace BestMatchDialog
             return bestMatch;
         }
 
-        private List<StringMatch> FindAllMatches(IEnumerable<string> choices, string utterance, double threshold = 0.6, bool ignoreCase = true, bool ignoreNonAlphanumeric = true)
+        private static IEnumerable<StringMatch> FindAllMatches(IEnumerable<string> choices, string utterance, double threshold = 0.6, bool ignoreCase = true, bool ignoreNonAlphanumeric = true)
         {
             var matches = new List<StringMatch>();
 
-            if (choices == null || !choices.Any())
+            var choicesList = choices as IList<string> ?? choices.ToList();
+
+            if (!choicesList.Any())
                 return matches;
 
-            var trimmedUtterance = utterance.Trim();
-            if (ignoreNonAlphanumeric)
-                trimmedUtterance = trimmedUtterance.Replace("?", string.Empty).Replace("'", string.Empty);
+            var utteranceToCheck = ignoreNonAlphanumeric 
+                ? utterance.ReplaceAll(@"[^A-Za-z0-9 ]", string.Empty).Trim() 
+                : utterance;
 
             var tokens = utterance.Split(' ');
 
-            foreach (var choice in choices)
+            foreach (var choice in choicesList)
             {
                 double score = 0;
                 var choiceValue = choice.Trim();
                 if (ignoreNonAlphanumeric)
-                    choiceValue = choiceValue.Replace("?", string.Empty).Replace("'", string.Empty);
+                    choiceValue.ReplaceAll(@"[^A-Za-z0-9 ]", string.Empty); 
 
-                if (choiceValue.IndexOf(trimmedUtterance, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0)
+                if (choiceValue.IndexOf(utteranceToCheck, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0)
                 {
-                    score = trimmedUtterance.Length / choiceValue.Length;
+                    score = utteranceToCheck.Length / choiceValue.Length;
                 }
-                else if (trimmedUtterance.IndexOf(choiceValue) >= 0)
+                else if (utteranceToCheck.IndexOf(choiceValue) >= 0)
                 {
-                    score = Math.Min(0.5 + (choiceValue.Length / trimmedUtterance.Length), 0.9);
+                    score = Math.Min(0.5 + (choiceValue.Length / utteranceToCheck.Length), 0.9);
                 }
                 else
                 {
@@ -208,8 +204,6 @@ namespace BestMatchDialog
                 var bestMatchHandler = (BestMatchHandler)created;
                 if (bestMatchHandler != null)
                 {
-                    //var bestMatchLists = bestMatchListAttributes.Select(i => i.BestMatchList).DefaultIfEmpty(null);
-
                     foreach (var bestMatchListAttribute in bestMatchListAttributes)
                     {
                         if (bestMatchListAttribute != null && bestMatchListAttributes.Any())
