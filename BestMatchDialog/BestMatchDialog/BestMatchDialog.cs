@@ -94,14 +94,7 @@ namespace BestMatchDialog
                 }
             }
 
-            if (handler != null)
-            {
-                await handler(context, messageText);
-            }
-            else
-            {
-                await NoMatchHandler(context, messageText);
-            }
+            await (handler ?? NoMatchHandler).Invoke(context, messageText);
         }
 
         protected virtual Task<string> GetBestMatchQueryTextAsync(IDialogContext context, IMessageActivity message)
