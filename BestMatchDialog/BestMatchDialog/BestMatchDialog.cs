@@ -96,11 +96,11 @@ namespace BestMatchDialog
 
             if (handler != null)
             {
-                await handler(context);
+                await handler(context, messageText);
             }
             else
             {
-                await NoMatchHandler(context);
+                await NoMatchHandler(context, messageText);
             }
         }
 
@@ -213,7 +213,7 @@ namespace BestMatchDialog
             }
         }
 
-        public virtual async Task NoMatchHandler(IDialogContext context)
+        public virtual async Task NoMatchHandler(IDialogContext context, string messageText)
         {
             throw new Exception("No best match found and NoMatchHandler method not overridden");
         }
@@ -242,5 +242,5 @@ namespace BestMatchDialog
         }
     }
 
-    public delegate Task BestMatchHandler(IDialogContext context);
+    public delegate Task BestMatchHandler(IDialogContext context, string messageText);
 }
