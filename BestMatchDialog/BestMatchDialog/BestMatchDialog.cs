@@ -46,7 +46,7 @@ namespace BestMatchDialog
         [NonSerialized]
         protected Dictionary<BestMatchAttribute, BestMatchHandler> HandlerByBestMatchLists;
 
-        protected string InitialMessage;
+        public string InitialMessage;
 
         public virtual async Task StartAsync(IDialogContext context)
         {
