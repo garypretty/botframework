@@ -4,7 +4,7 @@ This project is intended to become a selection of additional dialogs, extensions
 
 ## BestMatchDialog
 
-NuGet package: https://www.nuget.org/packages/BestMatchDialog/1.0.0
+NuGet package: https://www.nuget.org/packages/BestMatchDialog/
 
 The BestMatch dialog allows you to take the incoming message text from the bot and match it against 1 or more lists of strings. e.g. "hi", "hey there", "hello there".  The dialog will take the incoming message and find the Best Match in the list of strings, according the a threshold that you set (0.5 by default). For example, if the incoming message was "hello", it would match be a match (matched with "hello there"), but "greetings" would not match at all.
 
@@ -24,7 +24,7 @@ Below is an example of a class inheriting from BestMatchDialog:
         [BestMatch(new string[] { "Hi", "Hi There", "Hello there", "Hey", "Hello",
             "Hey there", "Greetings", "Good morning", "Good afternoon", "Good evening", "Good day" },
             threshold: 0.5, ignoreCase: false, ignoreNonAlphaNumericCharacters: false)]
-        public async Task HandleGreeting(IDialogContext context)
+        public async Task HandleGreeting(IDialogContext context, string messageText)
         {
             await context.PostAsync("Well hello there. What can I do for you today?");
             context.Wait(MessageReceived);
@@ -32,13 +32,13 @@ Below is an example of a class inheriting from BestMatchDialog:
 
         [BestMatch(new string[] { "bye", "bye bye", "got to go",
             "see you later", "laters", "adios" })]
-        public async Task HandleGoodbye(IDialogContext context)
+        public async Task HandleGoodbye(IDialogContext context, string messageText)
         {
             await context.PostAsync("Bye. Looking forward to our next awesome conversation already.");
             context.Wait(MessageReceived);
         }
 
-        public override async Task NoMatchHandler(IDialogContext context)
+        public override async Task NoMatchHandler(IDialogContext context, string messageText)
         {
             await context.PostAsync("I’m not sure what you want.");
             context.Wait(MessageReceived);
@@ -59,7 +59,7 @@ An example of the class implemented as a child dialog, plus some code calling a 
         [BestMatch(new string[] { "Hi", "Hi There", "Hello there", "Hey", "Hello",
             "Hey there", "Greetings", "Good morning", "Good afternoon", "Good evening", "Good day" },
             threshold: 0.5, ignoreCase: false, ignoreNonAlphaNumericCharacters: false)]
-        public async Task HandleGreeting(IDialogContext context)
+        public async Task HandleGreeting(IDialogContext context, string messageText)
         {
             await context.PostAsync("Well hello there. What can I do for you today?");
             context.Done(true);
@@ -67,13 +67,13 @@ An example of the class implemented as a child dialog, plus some code calling a 
 
         [BestMatch(new string[] { "bye", "bye bye", "got to go",
             "see you later", "laters", "adios" })]
-        public async Task HandleGoodbye(IDialogContext context)
+        public async Task HandleGoodbye(IDialogContext context, string messageText)
         {
             await context.PostAsync("Bye. Looking forward to our next awesome conversation already.");
             context.Done(true);
         }
         
-        public override async Task NoMatchHandler(IDialogContext context)
+        public override async Task NoMatchHandler(IDialogContext context, string messageText)
         {
             context.Done(false);
         }
