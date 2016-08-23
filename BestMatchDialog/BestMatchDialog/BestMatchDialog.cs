@@ -94,14 +94,7 @@ namespace BestMatchDialog
                 }
             }
 
-            if (handler != null)
-            {
-                await handler(context);
-            }
-            else
-            {
-                await NoMatchHandler(context);
-            }
+            await (handler ?? NoMatchHandler).Invoke(context, messageText);
         }
 
         protected virtual Task<string> GetBestMatchQueryTextAsync(IDialogContext context, IMessageActivity message)
@@ -213,7 +206,7 @@ namespace BestMatchDialog
             }
         }
 
-        public virtual async Task NoMatchHandler(IDialogContext context)
+        public virtual async Task NoMatchHandler(IDialogContext context, string messageText)
         {
             throw new Exception("No best match found and NoMatchHandler method not overridden");
         }
@@ -242,5 +235,5 @@ namespace BestMatchDialog
         }
     }
 
-    public delegate Task BestMatchHandler(IDialogContext context);
+    public delegate Task BestMatchHandler(IDialogContext context, string messageText);
 }
