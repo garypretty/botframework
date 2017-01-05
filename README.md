@@ -40,7 +40,7 @@ Below is an example of a class inheriting from BestMatchDialog:
 
         public override async Task NoMatchHandler(IDialogContext context, string messageText)
         {
-            await context.PostAsync("I’m not sure what you want.");
+            await context.PostAsync("Iâ€™m not sure what you want.");
             context.Wait(MessageReceived);
         }
 
@@ -48,13 +48,13 @@ Below is an example of a class inheriting from BestMatchDialog:
 
 You can use a BestMatch Dialog as your root dialog, but you can also use it as a child dialog, to handle common responses for example.  When calling as a child dialog, instead of calling content.Wait, you can call context.Done to pass back to the parent dialog.
 
-An example of the class implemented as a child dialog, plus some code calling a BestMatch dialog from a LUIS child dialog is shown below. NOTE: I am using the NoMatchFound override here to set the result of the dialog to false and then I check the result and act appropriately in the resume method ran when the dialog returns.
+An example of the class implemented as a child dialog, plus some code calling a BestMatch dialog from a LUIS child dialog is shown below. NOTE: I am using the NoMatchFound override here to set the result of the dialog to false and then I check the result and act appropriately in the resume method ran when the dialog returns. Also note the slight change to public class **CommonResponsesDialog : BestMatchDialog<bool>**, in order to then receieve a bool result in the **AfterCommonResponseHandled** method.
 
 
 ```cs
 
     [Serializable]
-    public class CommonResponsesDialog : BestMatchDialog<object>
+    public class CommonResponsesDialog : BestMatchDialog<bool>
     {
         [BestMatch(new string[] { "Hi", "Hi There", "Hello there", "Hey", "Hello",
             "Hey there", "Greetings", "Good morning", "Good afternoon", "Good evening", "Good day" },
@@ -97,7 +97,7 @@ and to call the dialog (here it is being called from a LUIS dialog)....
 
             if (!messageHandled)
             {
-                await context.PostAsync("I’m not sure what you want");
+                await context.PostAsync("Iâ€™m not sure what you want");
             }
 
             context.Wait(MessageReceived);
