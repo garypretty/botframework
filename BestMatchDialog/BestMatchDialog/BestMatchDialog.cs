@@ -145,7 +145,7 @@ namespace BestMatchDialog
 
                 if (choiceValue.IndexOf(utteranceToCheck, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0)
                 {
-                    score = utteranceToCheck.Length / choiceValue.Length;
+                    score = (double)decimal.Divide((decimal)utteranceToCheck.Length, (decimal)choiceValue.Length);
                 }
                 else if (utteranceToCheck.IndexOf(choiceValue) >= 0)
                 {
@@ -162,7 +162,7 @@ namespace BestMatchDialog
                             matched += token;
                         }
 
-                        score = matched.Length / choiceValue.Length;
+                        score = (double)decimal.Divide((decimal)matched.Length, (decimal)choiceValue.Length);
                     }
                 }
 
