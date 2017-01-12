@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>BestMatchDialog</id>
-    <version>1.2</version>
+    <version>1.4</version>
     <title>BestMatchDialog for Microsoft Bot Framework</title>
     <authors>Gary Pretty</authors>
     <owners>Gary Pretty</owners>
@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <summary>BestMatchDialog for the Microsoft Bot Framework is a dialog that allows you to match a message receieved from a bot user against a list of strings and then carry out an appropriate action.</summary>
     <description>BestMatchDialog for the Microsoft Bot Framework is a dialog that allows you to match a message receieved from a bot user against a list of strings and then carry out an appropriate action. Matching does not have to be exact and you can set the threshold as to how closely the message should match with an item in the list.</description>
-    <releaseNotes>Original message text is now passed through to BestMatchHandler. Fix for InitialMessage property being protected and could not be set.</releaseNotes>
+    <releaseNotes>Added the ability to specify the choices for each hanlder using a delimited string to support scenarios such as retrieving the string from a resource file for localisation.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>botframework bot framework dialog microsoft</tags>
   </metadata>
