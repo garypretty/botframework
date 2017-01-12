@@ -32,7 +32,7 @@ namespace BestMatchDialog.Sample.Dialogs
             context.Wait(MessageReceived);
         }
 
-        [BestMatch(new string[] { "thank you", "thanks", "much appreciated", "thanks very much", "thanking you" })]
+        [BestMatch("thank you|thanks|much appreciated|thanks very much|thanking you", listDelimiter: '|')]
         public async Task HandleThanks(IDialogContext context, string messageText)
         {
             await context.PostAsync("You're welcome.");

@@ -1,4 +1,4 @@
-# Additional Bot Framework dialogs
+﻿# Additional Bot Framework dialogs
 
 This project is intended to become a selection of additional dialogs, extensions and more for the Bot Framework.  Right now there is a single additional Dialog, the BestMatch Dialog.
 
@@ -7,6 +7,8 @@ This project is intended to become a selection of additional dialogs, extensions
 NuGet package: https://www.nuget.org/packages/BestMatchDialog/
 
 The BestMatch dialog allows you to take the incoming message text from the bot and match it against 1 or more lists of strings. e.g. "hi", "hey there", "hello there".  The dialog will take the incoming message and find the Best Match in the list of strings, according the a threshold that you set (0.5 by default). For example, if the incoming message was "hello", it would match be a match (matched with "hello there"), but "greetings" would not match at all.
+
+The list of strings is provided as either a List<string> (e.g. new string[] { "Hi", "Hi There" }). Alternatively the list can be provided as delimited string property (e.g. "Hi,hi there"), with an optional parameter (listDelimited) specifying the delimiting char being used.  This alternative could be used in scenarios where you might read the list of strings from a resource file for localisation purposes. An example of both using a list object of strings and a delmited strings is shown below and is also available in the sample project.
 
 Each list of strings to match against is paired with a method handler so that you can repsond appropriately based on the incoming message. As well as being able to set the matching threshold, you can also choose if matching should ignore case (case ignored by default) and if non alphanumeric characters should be ignored (also ignored by default).
 
@@ -30,8 +32,7 @@ Below is an example of a class inheriting from BestMatchDialog:
             context.Wait(MessageReceived);
         }
 
-        [BestMatch(new string[] { "bye", "bye bye", "got to go",
-            "see you later", "laters", "adios" })]
+        [BestMatch("bye|bye bye|got to go|see you later|laters|adios", listDelimiter: '|')]
         public async Task HandleGoodbye(IDialogContext context, string messageText)
         {
             await context.PostAsync("Bye. Looking forward to our next awesome conversation already.");
@@ -65,8 +66,7 @@ An example of the class implemented as a child dialog, plus some code calling a 
             context.Done(true);
         }
 
-        [BestMatch(new string[] { "bye", "bye bye", "got to go",
-            "see you later", "laters", "adios" })]
+        [BestMatch("bye|bye bye|got to go|see you later|laters|adios", listDelimiter: '|')]
         public async Task HandleGoodbye(IDialogContext context, string messageText)
         {
             await context.PostAsync("Bye. Looking forward to our next awesome conversation already.");

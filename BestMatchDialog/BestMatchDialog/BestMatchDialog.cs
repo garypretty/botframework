@@ -221,6 +221,7 @@ namespace BestMatchDialog
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class BestMatchAttribute : Attribute
     {
+        public readonly string BestMatchListDelimited;
         public readonly string[] BestMatchList;
         public readonly bool IgnoreCase;
         public readonly bool IgnoreNonAlphanumericCharacters;
@@ -232,6 +233,31 @@ namespace BestMatchDialog
             IgnoreCase = ignoreCase;
             IgnoreNonAlphanumericCharacters = ignoreNonAlphaNumericCharacters;
             Threshold = threshold;
+        }
+
+        public BestMatchAttribute(string bestMatchListDelimited, double threshold = 0.5, bool ignoreCase = true, bool ignoreNonAlphaNumericCharacters = true, char listDelimiter = ',')
+        {
+            BestMatchListDelimited = bestMatchListDelimited;
+
+            if(!string.IsNullOrEmpty(bestMatchListDelimited))
+            {
+                BestMatchList = StringToListString(bestMatchListDelimited, listDelimiter).ToArray<string>();       
+            }
+
+            IgnoreCase = ignoreCase;
+            IgnoreNonAlphanumericCharacters = ignoreNonAlphaNumericCharacters;
+            Threshold = threshold;
+        }
+
+        public static IEnumerable<string> StringToListString(string str, char delimiter = ',')
+        {
+            if (String.IsNullOrEmpty(str))
+                yield break;
+
+            foreach (var s in str.Split(delimiter))
+            {
+                yield return s;
+            }
         }
     }
 
