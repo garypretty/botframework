@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
-using QnADialog;
+using QnAMakerDialog;
 
-namespace QnADialog.Sample.Dialogs
+namespace QnAMakerDialog.Sample.Dialogs
 {
     [Serializable]
     [QnAMakerService("YOUR_SUBSCRIPTION_KEY", "YOUR_KNOWLEDGE_BASE_ID")]
-    public class QnADialog : QnADialog<object>
+    public class QnADialog : QnAMakerDialog<object>
     {
         public override async Task NoMatchHandler(IDialogContext context, string originalQueryText)
         {

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QnADialog.Sample", "QnADialog.Sample\QnADialog.Sample.csproj", "{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QnAMakerDialog.Sample", "QnAMakerDialog.Sample\QnAMakerDialog.Sample.csproj", "{6FA9E012-E0F9-4AE1-9206-22FAAA1C6EE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QnADialog", "QnADialog\QnADialog.csproj", "{5B3F1267-18B6-4966-87EB-0D85C308FB1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QnAMakerDialog", "QnAMakerDialog\QnAMakerDialog.csproj", "{5B3F1267-18B6-4966-87EB-0D85C308FB1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

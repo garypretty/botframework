@@ -40,12 +40,13 @@ using System.Reflection;
 using System.Linq;
 using Microsoft.Bot.Builder.Internals.Fibers;
 
-namespace QnADialog
+namespace QnAMakerDialog
 {
     [Serializable]
-    public class QnADialog<T> : IDialog<T>
+    public class QnAMakerDialog<T> : IDialog<T>
     {
-        QnAMakerService qNaMakerService;
+        private string subscriptionKey;
+        private string knowledgeBaseId;
 
         [NonSerialized]
         protected Dictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler> HandlerByMaximumScore;
@@ -54,7 +55,8 @@ namespace QnADialog
         {
             var type = this.GetType();
             var qNaServiceAttribute = type.GetCustomAttributes<QnAMakerServiceAttribute>().FirstOrDefault();
-            qNaMakerService = new QnAMakerService(qNaServiceAttribute.SubscriptionKey, qNaServiceAttribute.KnowledgeBaseId);
+            subscriptionKey = qNaServiceAttribute.SubscriptionKey;
+            knowledgeBaseId = qNaServiceAttribute.KnowledgeBaseId;
             context.Wait(MessageReceived);
         }
 
@@ -66,7 +68,7 @@ namespace QnADialog
 
         private async Task HandleMessage(IDialogContext context, string queryText)
         {
-            var response = await GetQnAMakerResponse(queryText, qNaMakerService.KnowledgeBaseId, qNaMakerService.SubscriptionKey);
+            var response = await GetQnAMakerResponse(queryText, knowledgeBaseId, subscriptionKey);
 
             if (HandlerByMaximumScore == null)
             {
@@ -192,35 +194,9 @@ namespace QnADialog
         }
     }
 
-    public interface IQnAMakerService
-    {
-        /// <summary>
-        /// The LUIS subscription key.
-        /// </summary>
-        string SubscriptionKey { get; }
-
-        /// <summary>
-        /// The base Uri for accessing LUIS.
-        /// </summary>
-        string KnowledgeBaseId { get; }
-    }
-
-    [Serializable]
-    public class QnAMakerService : IQnAMakerService
-    {
-        public QnAMakerService(string subscriptionId, string knowledgeBaseId)
-        {
-            SubscriptionKey = subscriptionId;
-            KnowledgeBaseId = knowledgeBaseId;
-        }
-
-        public string KnowledgeBaseId { get; set; }
-        public string SubscriptionKey { get; set; }
-    }
-
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true)]
     [Serializable]
-    public class QnAMakerServiceAttribute : Attribute, IQnAMakerService
+    public class QnAMakerServiceAttribute : Attribute
     {
         private readonly string subscriptionKey;
         public string SubscriptionKey => subscriptionKey;

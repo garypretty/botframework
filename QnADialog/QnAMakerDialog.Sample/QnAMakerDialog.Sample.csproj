@@ -11,8 +11,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QnAMaker.Sample</RootNamespace>
-    <AssemblyName>QnAMaker.Sample</AssemblyName>
+    <RootNamespace>QnAMakerDialog.Sample</RootNamespace>
+    <AssemblyName>QnAMakerDialog.Sample</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -133,9 +133,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BestMatchDialog\QnADialog.csproj">
+    <ProjectReference Include="..\QnADialog\QnAMakerDialog.csproj">
       <Project>{5b3f1267-18b6-4966-87eb-0d85c308fb1a}</Project>
-      <Name>QnADialog</Name>
+      <Name>QnAMakerDialog</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

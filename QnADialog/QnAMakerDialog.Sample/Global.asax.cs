@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 
-namespace QnADialog.Sample
+namespace QnAMakerDialog.Sample
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

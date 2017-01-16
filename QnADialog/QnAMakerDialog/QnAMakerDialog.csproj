@@ -7,8 +7,8 @@
     <ProjectGuid>{5B3F1267-18B6-4966-87EB-0D85C308FB1A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QnADialog</RootNamespace>
-    <AssemblyName>QnADialog</AssemblyName>
+    <RootNamespace>QnAMakerDialog</RootNamespace>
+    <AssemblyName>QnAMakerDialog</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

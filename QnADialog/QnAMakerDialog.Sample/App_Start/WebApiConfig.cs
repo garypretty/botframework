@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace QnADialog.Sample
+namespace QnAMakerDialog.Sample
 {
     public static class WebApiConfig
     {

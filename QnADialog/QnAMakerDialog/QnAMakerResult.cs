@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace QnADialog
+namespace QnAMakerDialog
 { 
     public class QnAMakerResult
     {

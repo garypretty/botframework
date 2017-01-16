@@ -6,7 +6,7 @@ using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace QnADialog.Sample
+namespace QnAMakerDialog.Sample
 {
     [BotAuthentication]
     public class MessagesController : ApiController
