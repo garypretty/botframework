@@ -133,7 +133,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QnADialog\QnAMakerDialog.csproj">
+    <ProjectReference Include="..\QnAMakerDialog\QnAMakerDialog.csproj">
       <Project>{5b3f1267-18b6-4966-87eb-0d85c308fb1a}</Project>
       <Name>QnAMakerDialog</Name>
     </ProjectReference>

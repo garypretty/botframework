@@ -143,7 +143,7 @@ namespace QnAMakerDialog
 
         public virtual async Task NoMatchHandler(IDialogContext context, string originalQueryText)
         {
-            throw new Exception("No QnA match found and NoMatchHandler method not overridden");
+            throw new Exception("Sorry, I cannot find an answer to your question.");
         }
 
         protected virtual IDictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler> GetHandlersByMaximumScore()
