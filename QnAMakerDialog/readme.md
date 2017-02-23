@@ -16,7 +16,9 @@ To do this you define a custom hanlder in your dialog and decorate it with a QnA
 
 A sample project using the QnAMakerDialog is included in the repository.
 
-Below is an example of a class inheriting from QnAMakerDialog and the minimal implementation:
+### Example usage as the root dialog (use as a child dialog below)
+
+Below is an example of a class inheriting from QnAMakerDialog and the minimal implementation when it is used as the root dialog within a bot:
 
 ```cs
 
@@ -50,5 +52,60 @@ In this case the custom handler will respond to answers where the confidence sco
             context.Wait(MessageReceived);
         }
     }
+
+```
+
+### Example of forwarding a message to the QnAMakerDialog as a child dialog
+
+Below is an example of using a QnAMakerDialog as a child dialog. For example, falling back to QnAMakerDialog from a LUIS dialog if no intents match.
+In this case you must override the DefaultMatchHandler and call context.Done to pass control back to the parent dialog. You need to do this in all of 
+your other handlers too, including NoMatchHandler.
+
+```cs
+
+   [Serializable]
+    [QnAMakerService("YOUR_SUBSCRIPTION_KEY", "YOUR_KNOWLEDGE_BASE_ID")]
+    public class QnADialog : QnAMakerDialog<true>
+    {
+        public override async Task NoMatchHandler(IDialogContext context, string originalQueryText)
+        {
+            await context.PostAsync($"Sorry, I couldn't find an answer for '{originalQueryText}'.");
+            context.Done(false);
+        }
+
+        public override async Task DefaultMatchHandler(IDialogContext context, string originalQueryText, QnAMakerResult result)
+        {
+            await context.PostAsync($"I found an answer that might help...{result.Answer}.");
+            context.Done(true);
+        }
+    }
+
+```
+
+Then in your root dialog, in this case a LUIS dialog, you can forward the incoming message to the QnAMakerDialog using context.Forward.
+Then in your callback you can determine if an answer was found.
+
+```cs
+
+        [LuisIntent("")]
+        public async Task None(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
+        {
+            var qnadialog = new QnADialog();
+            var messageToForward = await message;
+            await context.Forward(qnadialog, AfterQnADialog, messageToForward, CancellationToken.None);
+        }
+
+        private async Task AfterQnADialog(IDialogContext context, IAwaitable<bool> result)
+        {
+            var answerFound = await result;
+
+            // we might want to send a message or take some action if no answer was found (false returned)
+            if (!answerFound)
+            {
+                await context.PostAsync("I’m not sure what you want.");
+            }
+
+            context.Wait(MessageReceived);
+        }
 
 ```
