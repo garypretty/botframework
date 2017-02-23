@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using Microsoft.Bot.Builder.Internals.Fibers;
+using System.Text.RegularExpressions;
 
 namespace QnAMakerDialog
 {
@@ -137,7 +138,9 @@ namespace QnAMakerDialog
 
         public virtual async Task DefaultMatchHandler(IDialogContext context, string originalQueryText, QnAMakerResult result)
         {
-            await context.PostAsync(result.Answer);
+            var messageActivity = ProcessResultAndCreateMessageActivity(context, ref result);
+            messageActivity.Text = result.Answer;
+            await context.PostAsync(messageActivity);
             context.Wait(MessageReceived);
         }
 
@@ -180,6 +183,49 @@ namespace QnAMakerDialog
                     }
                 }
             }
+        }
+        protected static IMessageActivity ProcessResultAndCreateMessageActivity(IDialogContext context, ref QnAMakerResult result)
+        {
+            var message = context.MakeMessage();
+
+            var attachmentsItemRegex = new Regex("((&lt;attachment){1}((?:\\s+)|(?:(contentType=&quot;[\\w\\/]+&quot;))(?:\\s+)|(?:(contentUrl=&quot;[\\w:/.]+&quot;))(?:\\s+)|(?:(name=&quot;[\\w\\s]+&quot;))(?:\\s+)|(?:(thumbnailUrl=&quot;[\\w:/.]+&quot;))(?:\\s+))+(/&gt;))", RegexOptions.IgnoreCase);
+            var matches = attachmentsItemRegex.Matches(result.Answer);
+
+            foreach (var attachmentMatch in matches)
+            {
+                result.Answer = result.Answer.Replace(attachmentMatch.ToString(), string.Empty);
+
+                var match = attachmentsItemRegex.Match(attachmentMatch.ToString());
+                string contentType = string.Empty;
+                string name = string.Empty;
+                string contentUrl = string.Empty;
+                string thumbnailUrl = string.Empty;
+
+                foreach (var group in match.Groups)
+                {
+                    if(group.ToString().ToLower().Contains("contenttype="))
+                    {
+                        contentType = group.ToString().ToLower().Replace(@"contenttype=&quot;", string.Empty).Replace("&quot;",string.Empty);
+                    }
+                    if (group.ToString().ToLower().Contains("contenturl="))
+                    {
+                        contentUrl = group.ToString().ToLower().Replace(@"contenturl=&quot;", string.Empty).Replace("&quot;", string.Empty);
+                    }
+                    if (group.ToString().ToLower().Contains("name="))
+                    {
+                        name = group.ToString().ToLower().Replace(@"name=&quot;", string.Empty).Replace("&quot;", string.Empty);
+                    }
+                    if (group.ToString().ToLower().Contains("thumbnailurl="))
+                    {
+                        thumbnailUrl = group.ToString().ToLower().Replace(@"thumbnailurl=&quot;", string.Empty).Replace("&quot;", string.Empty);
+                    }
+                }
+
+                var attachment = new Attachment(contentType, contentUrl, name: !string.IsNullOrEmpty(name) ? name : null, thumbnailUrl: !string.IsNullOrEmpty(thumbnailUrl) ? thumbnailUrl : null);
+                message.Attachments.Add(attachment);
+            }
+
+            return message;
         }
     }
 
