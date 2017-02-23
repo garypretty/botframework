@@ -46,8 +46,10 @@ namespace QnAMakerDialog
     [Serializable]
     public class QnAMakerDialog<T> : IDialog<T>
     {
-        private string subscriptionKey;
-        private string knowledgeBaseId;
+        private string _subscriptionKey;
+        private string _knowledgeBaseId;
+        public string SubscriptionKey { get => _subscriptionKey; set => _subscriptionKey = value; }
+        public string KnowledgeBaseId { get => _knowledgeBaseId; set => _knowledgeBaseId = value; }
 
         [NonSerialized]
         protected Dictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler> HandlerByMaximumScore;
@@ -56,8 +58,18 @@ namespace QnAMakerDialog
         {
             var type = this.GetType();
             var qNaServiceAttribute = type.GetCustomAttributes<QnAMakerServiceAttribute>().FirstOrDefault();
-            subscriptionKey = qNaServiceAttribute.SubscriptionKey;
-            knowledgeBaseId = qNaServiceAttribute.KnowledgeBaseId;
+
+            if (string.IsNullOrEmpty(KnowledgeBaseId) && qNaServiceAttribute != null)
+                KnowledgeBaseId = qNaServiceAttribute.KnowledgeBaseId;
+
+            if (string.IsNullOrEmpty(SubscriptionKey) && qNaServiceAttribute != null)
+                SubscriptionKey = qNaServiceAttribute.SubscriptionKey;
+
+            if(string.IsNullOrEmpty(KnowledgeBaseId) || string.IsNullOrEmpty(SubscriptionKey))
+            {
+                throw new Exception("Valid KnowledgeBaseId and SubscriptionKey not provided. Use QnAMakerServiceAttribute or set fields on QnAMakerDialog");
+            }
+
             context.Wait(MessageReceived);
         }
 
@@ -69,7 +81,7 @@ namespace QnAMakerDialog
 
         private async Task HandleMessage(IDialogContext context, string queryText)
         {
-            var response = await GetQnAMakerResponse(queryText, knowledgeBaseId, subscriptionKey);
+            var response = await GetQnAMakerResponse(queryText, KnowledgeBaseId, SubscriptionKey);
 
             if (HandlerByMaximumScore == null)
             {
