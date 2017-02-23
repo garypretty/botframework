@@ -124,7 +124,9 @@ Then in your callback you can determine if an answer was found.
 QnAMakerDialog now supports adding rich attachments to responses, such as videos, images or files. To do this you need to add attachment markup to your QnA answers within the 
 QnAMaker dashboard. For example, if you wanted to return a video with your answer you would add the following to the answer.
 
+```xml
 <attachment contentType="video/mp4" contentUrl="http://www.yourdomain.com/video.mp4" name="Your title" thumbnailUrl="http://www.yourdomain.com/thumbnail.png" />
+```
 
 By default the dialog will strip the answer of any attachment markup and then add the approproate attachments to the answers. However, if you want to handle attachments in your
 own handlers you can use the helper method ProcessResultAndCreateMessageActivity which will generate a message activity with the answer and attachments ready to post back to the user.
