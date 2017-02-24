@@ -200,7 +200,8 @@ namespace QnAMakerDialog
         {
             var message = context.MakeMessage();
 
-            var attachmentsItemRegex = new Regex("((&lt;attachment){1}((?:\\s+)|(?:(contentType=&quot;[\\w\\/]+&quot;))(?:\\s+)|(?:(contentUrl=&quot;[\\w:/.]+&quot;))(?:\\s+)|(?:(name=&quot;[\\w\\s]+&quot;))(?:\\s+)|(?:(thumbnailUrl=&quot;[\\w:/.]+&quot;))(?:\\s+))+(/&gt;))", RegexOptions.IgnoreCase);
+            //var attachmentsItemRegex = new Regex("((&lt;attachment){1}((?:\\s+)|(?:(contentType=&quot;[\\w\\/]+&quot;))(?:\\s+)|(?:(contentUrl=&quot;[\\w:/.]+&quot;))(?:\\s+)|(?:(name=&quot;[\\w\\s]+&quot;))(?:\\s+)|(?:(thumbnailUrl=&quot;[\\w:/.]+&quot;))(?:\\s+))+(/&gt;))", RegexOptions.IgnoreCase);
+            var attachmentsItemRegex = new Regex("((&lt;attachment){1}((?:\\s+)|(?:(contentType=&quot;[\\w\\/-]+&quot;))(?:\\s+)|(?:(contentUrl=&quot;[\\w:/.=?-]+&quot;))(?:\\s+)|(?:(name=&quot;[\\w\\s&?\\-.@%$!£\\(\\)]+&quot;))(?:\\s+)|(?:(thumbnailUrl=&quot;[\\w:/.=?-]+&quot;))(?:\\s+))+(/&gt;))", RegexOptions.IgnoreCase);
             var matches = attachmentsItemRegex.Matches(result.Answer);
 
             foreach (var attachmentMatch in matches)
