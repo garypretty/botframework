@@ -13,7 +13,7 @@ namespace QnAMakerDialog.Sample
     {
         internal static IDialog<object> MakeRoot()
         {
-            return Chain.From(() => new Dialogs.QnADialog());
+            return Chain.From(() => new Dialogs.QnADialog("258dbfdd-2470-46ae-ae1f-8a2354d31d80"));
         }
 
         /// <summary>
