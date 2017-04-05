@@ -48,8 +48,18 @@ namespace QnAMakerDialog
     {
         private string _subscriptionKey;
         private string _knowledgeBaseId;
-        public string SubscriptionKey { get => _subscriptionKey; set => _subscriptionKey = value; }
-        public string KnowledgeBaseId { get => _knowledgeBaseId; set => _knowledgeBaseId = value; }
+        public string SubscriptionKey { get { return _subscriptionKey; } set { _subscriptionKey = value; } }            
+        public string KnowledgeBaseId { get { return _knowledgeBaseId; } set { _knowledgeBaseId = value; } }
+
+        public QnAMakerDialog()
+        {
+
+        }
+
+        public QnAMakerDialog(string knowledgeBaseId)
+        {
+            _knowledgeBaseId = knowledgeBaseId;
+        }
 
         [NonSerialized]
         protected Dictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler> HandlerByMaximumScore;
@@ -266,7 +276,10 @@ namespace QnAMakerDialog
         public QnAMakerServiceAttribute(string subscriptionKey, string knowledgeBaseId)
         {
             SetField.NotNull(out this.subscriptionKey, nameof(subscriptionKey), subscriptionKey);
-            SetField.NotNull(out this.knowledgeBaseId, nameof(knowledgeBaseId), knowledgeBaseId);
+            if (!string.IsNullOrEmpty(knowledgeBaseId))
+            {
+                SetField.NotNull(out this.knowledgeBaseId, nameof(knowledgeBaseId), knowledgeBaseId);
+            }
         }
     }
 

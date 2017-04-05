@@ -5,9 +5,14 @@ using Microsoft.Bot.Builder.Dialogs;
 namespace QnAMakerDialog.Sample.Dialogs
 {
     [Serializable]
-    [QnAMakerService("8f833e867b25443b95d8c23cd367f7ce", "258dbfdd-2470-46ae-ae1f-8a2354d31d80")]
+    [QnAMakerService("8f833e867b25443b95d8c23cd367f7ce", null)]
     public class QnADialog : QnAMakerDialog<object>
     {
+
+        public QnADialog(string knowledgeBaseId) : base(knowledgeBaseId)
+        {
+        }
+
         /// <summary>
         /// Handler used when the QnAMaker finds no appropriate answer
         /// </summary>
