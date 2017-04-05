@@ -46,10 +46,8 @@ namespace QnAMakerDialog
     [Serializable]
     public class QnAMakerDialog<T> : IDialog<T>
     {
-        private string _subscriptionKey;
-        private string _knowledgeBaseId;
-        public string SubscriptionKey { get { return _subscriptionKey; } set { _subscriptionKey = value; } }            
-        public string KnowledgeBaseId { get { return _knowledgeBaseId; } set { _knowledgeBaseId = value; } }
+        public string SubscriptionKey { get; set; }
+        public string KnowledgeBaseId { get; set; }
 
         public QnAMakerDialog()
         {
@@ -58,7 +56,7 @@ namespace QnAMakerDialog
 
         public QnAMakerDialog(string knowledgeBaseId)
         {
-            _knowledgeBaseId = knowledgeBaseId;
+            KnowledgeBaseId = knowledgeBaseId;
         }
 
         [NonSerialized]
