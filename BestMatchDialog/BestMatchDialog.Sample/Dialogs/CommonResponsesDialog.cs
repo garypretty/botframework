@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
+using BestMatchDialog.Sample.Properties;
 
 namespace BestMatchDialog.Sample.Dialogs
 {
@@ -16,8 +17,7 @@ namespace BestMatchDialog.Sample.Dialogs
             context.Wait(MessageReceived);
         }
 
-        [BestMatch(new string[] { "how goes it", "how do", "hows it going", "how are you",
-            "how do you feel", "whats up", "sup", "hows things" })]
+        [BestMatch(typeof(BestMatchDialogResources), nameof(BestMatchDialogResources.CommonResponsesDialog_StatusRequest))]
         public async Task HandleStatusRequest(IDialogContext context, string messageText)
         {
             await context.PostAsync("I am great.");
