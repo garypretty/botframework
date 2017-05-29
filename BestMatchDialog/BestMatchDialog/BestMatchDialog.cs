@@ -249,6 +249,11 @@ namespace BestMatchDialog
             Threshold = threshold;
         }
 
+        public BestMatchAttribute(Type resourceType, string bestMatchListDelimitedResourceName, double threshold = 0.5, bool ignoreCase = true, bool ignoreNonAlphaNumericCharacters = true, char listDelimiter = ',') 
+            : this(ResourceHelper.GetResourceLookup<string>(resourceType, bestMatchListDelimitedResourceName), threshold: threshold, ignoreCase: ignoreCase, ignoreNonAlphaNumericCharacters: ignoreNonAlphaNumericCharacters, listDelimiter: listDelimiter)
+        {
+        }
+
         public static IEnumerable<string> StringToListString(string str, char delimiter = ',')
         {
             if (String.IsNullOrEmpty(str))
@@ -261,5 +266,23 @@ namespace BestMatchDialog
         }
     }
 
+    //From: https://stackoverflow.com/a/15193981
+    public static class ResourceHelper
+    {
+        public static T GetResourceLookup<T>(Type resourceType, string resourceName)
+        {
+            if ((resourceType != null) && (resourceName != null))
+            {
+                PropertyInfo property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+                if (property == null)
+                {
+                    return default(T);
+                }
+
+                return (T)property.GetValue(null, null);
+            }
+            return default(T);
+        }
+    }
     public delegate Task BestMatchHandler(IDialogContext context, string messageText);
 }
