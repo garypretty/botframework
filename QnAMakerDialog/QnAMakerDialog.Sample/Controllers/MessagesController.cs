@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using QnAMakerDialog.Models;
+using QnAMakerDialog.Sample.Dialogs;
 
 namespace QnAMakerDialog.Sample
 {
@@ -13,7 +16,20 @@ namespace QnAMakerDialog.Sample
     {
         internal static IDialog<object> MakeRoot()
         {
-            return Chain.From(() => new Dialogs.QnADialog());
+            var qnaDialog = new Dialogs.QnADialog
+            {
+                MetadataFilter = new List<Metadata>()
+            };
+
+            var categoryMetadata = new Metadata
+            {
+                Name = "Category",
+                Value = "Moving home"
+            };
+
+            qnaDialog.MetadataFilter.Add(categoryMetadata);
+
+            return qnaDialog;
         }
 
         /// <summary>

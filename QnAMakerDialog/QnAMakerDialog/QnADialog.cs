@@ -38,8 +38,10 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using Microsoft.Bot.Builder.Internals.Fibers;
 using System.Text.RegularExpressions;
+using Autofac.Features.Metadata;
+using Chronic.Handlers;
+using QnAMakerDialog.Models;
 
 namespace QnAMakerDialog
 {
@@ -48,8 +50,15 @@ namespace QnAMakerDialog
     {
         private string _subscriptionKey;
         private string _knowledgeBaseId;
+        private int _maxAnswers;
+        private List<Metadata> _metadataBoost;
+        private List<Metadata> _metadataFilter;
+
         public string SubscriptionKey { get => _subscriptionKey; set => _subscriptionKey = value; }
         public string KnowledgeBaseId { get => _knowledgeBaseId; set => _knowledgeBaseId = value; }
+        public int MaxAnswers { get => _maxAnswers; set => _maxAnswers = value; }
+        public List<Metadata> MetadataBoost { get => _metadataBoost; set => _metadataBoost = value; }
+        public List<Metadata> MetadataFilter { get => _metadataFilter; set => _metadataFilter = value; }
 
         [NonSerialized]
         protected Dictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler> HandlerByMaximumScore;
@@ -65,7 +74,10 @@ namespace QnAMakerDialog
             if (string.IsNullOrEmpty(SubscriptionKey) && qNaServiceAttribute != null)
                 SubscriptionKey = qNaServiceAttribute.SubscriptionKey;
 
-            if(string.IsNullOrEmpty(KnowledgeBaseId) || string.IsNullOrEmpty(SubscriptionKey))
+            if (qNaServiceAttribute != null)
+                MaxAnswers = qNaServiceAttribute.MaxAnswers;
+
+            if (string.IsNullOrEmpty(KnowledgeBaseId) || string.IsNullOrEmpty(SubscriptionKey))
             {
                 throw new Exception("Valid KnowledgeBaseId and SubscriptionKey not provided. Use QnAMakerServiceAttribute or set fields on QnAMakerDialog");
             }
@@ -89,13 +101,13 @@ namespace QnAMakerDialog
                     new Dictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler>(GetHandlersByMaximumScore());
             }
 
-            if (response.Score == 0)
+            if (response.Answers.Any() && response.Answers.First().QnaId == -1)
             {
                 await NoMatchHandler(context, queryText);
             }
             else
             {
-                var applicableHandlers = HandlerByMaximumScore.OrderBy(h => h.Key.MaximumScore).Where(h => h.Key.MaximumScore > response.Score);
+                var applicableHandlers = HandlerByMaximumScore.OrderBy(h => h.Key.MaximumScore).Where(h => h.Key.MaximumScore > response.Answers.First().Score);
                 var handler = applicableHandlers.Any() ? applicableHandlers.First().Value : null;
 
                 if (handler != null)
@@ -111,17 +123,27 @@ namespace QnAMakerDialog
 
         private async Task<QnAMakerResult> GetQnAMakerResponse(string query, string knowledgeBaseId, string subscriptionKey)
         {
-            string responseString = string.Empty;
+            string responseString;
 
             var knowledgebaseId = knowledgeBaseId; // Use knowledge base id created.
             var qnamakerSubscriptionKey = subscriptionKey; //Use subscription key assigned to you.
 
             //Build the URI
-            Uri qnamakerUriBase = new Uri("https://westus.api.cognitive.microsoft.com/qnamaker/v1.0");
+            var qnamakerUriBase = new Uri("https://westus.api.cognitive.microsoft.com/qnamaker/v3.0");
             var builder = new UriBuilder($"{qnamakerUriBase}/knowledgebases/{knowledgebaseId}/generateAnswer");
 
             //Add the question as part of the body
-            var postBody = $"{{\"question\": \"{query}\"}}";
+            var request = new QnAMakerRequest()
+            {
+                Question = query,
+                Top = MaxAnswers,
+                UserId = "QnAMakerDialog"
+            };
+
+            request.MetadataBoost = MetadataBoost?.ToArray() ?? new Metadata[] { };
+            request.StrictFilters = MetadataFilter?.ToArray() ?? new Metadata[] { };
+
+            var postBody = JsonConvert.SerializeObject(request);
 
             //Send the POST request
             using (WebClient client = new WebClient())
@@ -136,10 +158,9 @@ namespace QnAMakerDialog
             }
 
             //De-serialize the response
-            QnAMakerResult response;
             try
             {
-                response = JsonConvert.DeserializeObject<QnAMakerResult>(responseString);
+                var response = JsonConvert.DeserializeObject<QnAMakerResult>(responseString);
                 return response;
             }
             catch
@@ -151,7 +172,7 @@ namespace QnAMakerDialog
         public virtual async Task DefaultMatchHandler(IDialogContext context, string originalQueryText, QnAMakerResult result)
         {
             var messageActivity = ProcessResultAndCreateMessageActivity(context, ref result);
-            messageActivity.Text = result.Answer;
+            messageActivity.Text = result.Answers.First().Answer;
             await context.PostAsync(messageActivity);
             context.Wait(MessageReceived);
         }
@@ -196,17 +217,17 @@ namespace QnAMakerDialog
                 }
             }
         }
+
         protected static IMessageActivity ProcessResultAndCreateMessageActivity(IDialogContext context, ref QnAMakerResult result)
         {
             var message = context.MakeMessage();
 
-            //var attachmentsItemRegex = new Regex("((&lt;attachment){1}((?:\\s+)|(?:(contentType=&quot;[\\w\\/]+&quot;))(?:\\s+)|(?:(contentUrl=&quot;[\\w:/.]+&quot;))(?:\\s+)|(?:(name=&quot;[\\w\\s]+&quot;))(?:\\s+)|(?:(thumbnailUrl=&quot;[\\w:/.]+&quot;))(?:\\s+))+(/&gt;))", RegexOptions.IgnoreCase);
             var attachmentsItemRegex = new Regex("((&lt;attachment){1}((?:\\s+)|(?:(contentType=&quot;[\\w\\/-]+&quot;))(?:\\s+)|(?:(contentUrl=&quot;[\\w:/.=?-]+&quot;))(?:\\s+)|(?:(name=&quot;[\\w\\s&?\\-.@%$!£\\(\\)]+&quot;))(?:\\s+)|(?:(thumbnailUrl=&quot;[\\w:/.=?-]+&quot;))(?:\\s+))+(/&gt;))", RegexOptions.IgnoreCase);
-            var matches = attachmentsItemRegex.Matches(result.Answer);
+            var matches = attachmentsItemRegex.Matches(result.Answers.First().Answer);
 
             foreach (var attachmentMatch in matches)
             {
-                result.Answer = result.Answer.Replace(attachmentMatch.ToString(), string.Empty);
+                result.Answers.First().Answer = result.Answers.First().Answer.Replace(attachmentMatch.ToString(), string.Empty);
 
                 var match = attachmentsItemRegex.Match(attachmentMatch.ToString());
                 string contentType = string.Empty;
@@ -257,16 +278,17 @@ namespace QnAMakerDialog
     [Serializable]
     public class QnAMakerServiceAttribute : Attribute
     {
-        private readonly string subscriptionKey;
-        public string SubscriptionKey => subscriptionKey;
+        public string SubscriptionKey { get; set; }
+        public string KnowledgeBaseId { get; set; }
+        public int MaxAnswers { get; set; }
+        public List<Metadata> MetadataBoost { get; set; }
+        public List<Metadata> MetadataFilter { get; set; }
 
-        private readonly string knowledgeBaseId;
-        public string KnowledgeBaseId => knowledgeBaseId;
-
-        public QnAMakerServiceAttribute(string subscriptionKey, string knowledgeBaseId)
+        public QnAMakerServiceAttribute(string subscriptionKey, string knowledgeBaseId, int maxAnswers = 5)
         {
-            SetField.NotNull(out this.subscriptionKey, nameof(subscriptionKey), subscriptionKey);
-            SetField.NotNull(out this.knowledgeBaseId, nameof(knowledgeBaseId), knowledgeBaseId);
+            MaxAnswers = maxAnswers;
+            SubscriptionKey = subscriptionKey;
+            KnowledgeBaseId = knowledgeBaseId;
         }
     }
 
