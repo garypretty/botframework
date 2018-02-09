@@ -1,13 +1,12 @@
 ## QnAMakerDialog (updated to work with QnA Maker v3 API)
 
-NuGet package: https://www.nuget.org/packages/QnAMakerDialog/
-QnA Maker v3 API: https://westus.dev.cognitive.microsoft.com/docs/services/597029932bcd590e74b648fb/operations/597037798a8bb5031800bf5b 
+NuGet package: https://www.nuget.org/packages/QnAMakerDialog/ 
 
 The QnAMakerDialog allows you to easily integrate a bot built on the Bot Framework with the QnA Maker Service, part of the Microsoft Cognitive Services suite.
 
 The QnAMakerDialog allows you to take the incoming message text from the bot, send it to your published QnA Maker service, get the top answers from your knowledgebase and send the top answer sent back from the service to the bot user as a reply automatically, or create your own handlers if you want more control - such as presenting the user with more than one of the answers found.
 
-The latest version of QnAMakerDialog now works with v3 of the QnA Maker API, allowing you to get multiple answers back from the service and use metadata to filter or boost answers within your knowledgebase. 
+The latest version of QnAMakerDialog now works with v3 of the QnA Maker API (https://westus.dev.cognitive.microsoft.com/docs/services/597029932bcd590e74b648fb/operations/597037798a8bb5031800bf5b), allowing you to get multiple answers back from the service and use metadata to filter or boost answers within your knowledgebase. 
 
 The most straightforward implementation is to simply create a new QnAMakerDialog and specify your QnA Maker subscription key and knowledgebase ID (provided to you when you publish your service at QnAMaker.ai).
 Once you have done this messages will be sent to the QnA service and the top answers recieved from the service will be sent to the user.
