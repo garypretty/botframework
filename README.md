@@ -6,7 +6,7 @@ This project is intended to become a selection of additional dialogs, extensions
 
 NuGet package: https://www.nuget.org/packages/QnAMakerDialog/
 
-The QnAMakerDialog allows you to easily integrate a bot built on the Bot Framework with the QnA Maker Service, part of the Microsoft Cognitive Services suite.
+The QnAMakerDialog allows you to easily integrate a bot built on the Bot Framework with the QnA Maker Service, part of the Microsoft Cognitive Services suite. Now updated to work with the QnA Maker v3 API, supporting multiple answers and the ability to filter / boost answers based on metadata.
 
 Full details and further documentation -> [QnAMakerDialog](https://github.com/garypretty/botframework/tree/master/QnAMakerDialog) 
 
