@@ -7,7 +7,7 @@ using QnAMakerDialog.Models;
 namespace QnAMakerDialog.Sample.Dialogs
 {
     [Serializable]
-    [QnAMakerService("8f833e867b25443b95d8c23cd367f7ce", "bd123952-95a7-44e3-8892-dc1dbf9af532", 10)]
+    [QnAMakerService("<YOUR_SUBSCRIPTION_KEY>", "<YOUR_KNOWLEDGE_BASE_ID>", MaxAnswers = 10)]
     public class QnADialog : QnAMakerDialog<object>
     {
         /// <summary>

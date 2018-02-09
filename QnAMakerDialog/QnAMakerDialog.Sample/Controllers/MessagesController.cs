@@ -16,19 +16,18 @@ namespace QnAMakerDialog.Sample
     {
         internal static IDialog<object> MakeRoot()
         {
-            var qnaDialog = new Dialogs.QnADialog
+            var qnaDialog = new QnADialog
             {
                 MetadataFilter = new List<Metadata>()
+                {
+                    new Metadata()
+                    {
+                        Name = "Category",
+                        Value = "Moving home"
+                    }
+                }
             };
-
-            var categoryMetadata = new Metadata
-            {
-                Name = "Category",
-                Value = "Moving home"
-            };
-
-            qnaDialog.MetadataFilter.Add(categoryMetadata);
-
+            
             return qnaDialog;
         }
 
