@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>QnAMakerDialog</id>
-    <version>1.1.1</version>
+    <version>3.0.0</version>
     <title>QnAMakerDialog for Microsoft Bot Framework</title>
     <authors>Gary Pretty</authors>
     <owners>Gary Pretty</owners>
@@ -10,9 +10,9 @@
     <projectUrl>https://github.com/garypretty/botframework</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <summary>QnAMakerDialog for the Microsoft Bot Framework is a dialog that allows you to easily integrate the QnA Maker Service, part of Microsoft Cognitive Services to you bot.</summary>
-    <description>QnAMakerDialog for the Microsoft Bot Framework is a dialog that allows you to integrate the QnA Maker Service with a bot built on the Bot Framework. This dialog will take messages receieved to a bot and send them to a QnA Maker service and return the most appropriate answer. If no answer is found then a default message is displayed. You can also add hanlders to alter your bot's messaging depending on the confidence the QnA Maker response and also add rich attachments to your responses such as videos / images / files.</description>
-    <releaseNotes>Updated to support rich attachments, such as video / images / files being sent with responses. Details in the GitHub readme.</releaseNotes>
-    <copyright>Copyright 2017</copyright>
-    <tags>botframework bot framework dialog microsoft qnamaker cognitive</tags>
+    <description>QnAMakerDialog for the Microsoft Bot Framework is a dialog that allows you to integrate the QnA Maker Service with a bot built on the Bot Framework. This dialog will take messages receieved to a bot and send them to a QnA Maker service (updated for v3 API) and return one or more answers. If no answer is found then a default message is displayed. You can also add hanlders to alter your bot's messaging depending on the confidence the QnA Maker response and also add rich attachments to your responses such as videos / images / files.</description>
+    <releaseNotes>Updated to v3 API for the QnA Maker Service, including updated result object which can return multiple answers, and the ability to use metadata to filter or boost answers. Details in the GitHub readme.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>botframework bot framework dialog microsoft qnamaker cognitive azure bot service</tags>
   </metadata>
 </package>
