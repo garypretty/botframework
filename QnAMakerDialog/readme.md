@@ -1,4 +1,4 @@
-## QnAMakerDialog (updated to work with QnA Maker v3 API)
+﻿## QnAMakerDialog (updated to work with QnA Maker v3 API)
 
 NuGet package: https://www.nuget.org/packages/QnAMakerDialog/ 
 
@@ -62,9 +62,10 @@ Below is an example with a customised method for when a match is not found and a
         [QnAMakerResponseHandler(50)]
         public async Task LowScoreHandler(IDialogContext context, string originalQueryText, QnAMakerResult result)
         {
-            messageActivity.Text = $"I found {result.Answers.Length} answer(s) that might help..."
-            messageActivity.Text += "here is the first, which returned a score of {result.Answers.First().Score}...{result.Answers.First().Answer}";
+            var message = $"I found {result.Answers.Length} answer(s) that might help..."
+            message += "here is the first, which returned a score of {result.Answers.First().Score}...{result.Answers.First().Answer}";
             
+            await context.PostAsync(message);
             context.Wait(MessageReceived);
         }
     }

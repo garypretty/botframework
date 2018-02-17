@@ -42,7 +42,7 @@ namespace QnAMakerDialog.Sample.Dialogs
         public async Task LowScoreHandler(IDialogContext context, string originalQueryText, QnAMakerResult result)
         {
             var messageActivity = ProcessResultAndCreateMessageActivity(context, ref result);
-            messageActivity.Text = $"I found an answer that might help...{result.Answers.First().Score}.";
+            messageActivity.Text = $"I found an answer that might help...{result.Answers.First().Answer}.";
             await context.PostAsync(messageActivity);
 
             context.Wait(MessageReceived);
