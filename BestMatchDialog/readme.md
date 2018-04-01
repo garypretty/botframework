@@ -1,5 +1,6 @@
 ## BestMatchDialog
 
+
 NuGet package: https://www.nuget.org/packages/BestMatchDialog/
 
 The BestMatch dialog allows you to take the incoming message text from the bot and match it against 1 or more lists of strings. e.g. "hi", "hey there", "hello there".  The dialog will take the incoming message and find the Best Match in the list of strings, according the a threshold that you set (0.5 by default). For example, if the incoming message was "hello", it would match be a match (matched with "hello there"), but "greetings" would not match at all.
@@ -37,7 +38,7 @@ Below is an example of a class inheriting from BestMatchDialog:
 
         public override async Task NoMatchHandler(IDialogContext context, string messageText)
         {
-            await context.PostAsync("I’m not sure what you want.");
+            await context.PostAsync("Iâ€™m not sure what you want.");
             context.Wait(MessageReceived);
         }
 
@@ -93,7 +94,7 @@ and to call the dialog (here it is being called from a LUIS dialog)....
 
             if (!messageHandled)
             {
-                await context.PostAsync("I’m not sure what you want");
+                await context.PostAsync("Iâ€™m not sure what you want");
             }
 
             context.Wait(MessageReceived);
