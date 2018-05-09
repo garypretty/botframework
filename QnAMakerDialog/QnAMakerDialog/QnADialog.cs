@@ -48,13 +48,15 @@ namespace QnAMakerDialog
     [Serializable]
     public class QnAMakerDialog<T> : IDialog<T>
     {
-        private string _subscriptionKey;
+        private string _baseUri;
+        private string _endpointKey;
         private string _knowledgeBaseId;
         private int _maxAnswers;
         private List<Metadata> _metadataBoost;
         private List<Metadata> _metadataFilter;
 
-        public string SubscriptionKey { get => _subscriptionKey; set => _subscriptionKey = value; }
+        public string BaseUri { get => _baseUri; set => _baseUri = value; }
+        public string EndpointKey { get => _endpointKey; set => _endpointKey = value; }
         public string KnowledgeBaseId { get => _knowledgeBaseId; set => _knowledgeBaseId = value; }
         public int MaxAnswers { get => _maxAnswers; set => _maxAnswers = value; }
         public List<Metadata> MetadataBoost { get => _metadataBoost; set => _metadataBoost = value; }
@@ -69,17 +71,20 @@ namespace QnAMakerDialog
             var qNaServiceAttribute = type.GetCustomAttributes<QnAMakerServiceAttribute>().FirstOrDefault();
 
             if (string.IsNullOrEmpty(KnowledgeBaseId) && qNaServiceAttribute != null)
+                BaseUri = qNaServiceAttribute.BaseUri;
+
+            if (string.IsNullOrEmpty(KnowledgeBaseId) && qNaServiceAttribute != null)
                 KnowledgeBaseId = qNaServiceAttribute.KnowledgeBaseId;
 
-            if (string.IsNullOrEmpty(SubscriptionKey) && qNaServiceAttribute != null)
-                SubscriptionKey = qNaServiceAttribute.SubscriptionKey;
+            if (string.IsNullOrEmpty(EndpointKey) && qNaServiceAttribute != null)
+                EndpointKey = qNaServiceAttribute.EndpointKey;
 
             if (qNaServiceAttribute != null)
                 MaxAnswers = qNaServiceAttribute.MaxAnswers;
 
-            if (string.IsNullOrEmpty(KnowledgeBaseId) || string.IsNullOrEmpty(SubscriptionKey))
+            if (string.IsNullOrEmpty(BaseUri) || string.IsNullOrEmpty(KnowledgeBaseId) || string.IsNullOrEmpty(EndpointKey))
             {
-                throw new Exception("Valid KnowledgeBaseId and SubscriptionKey not provided. Use QnAMakerServiceAttribute or set fields on QnAMakerDialog");
+                throw new Exception("Valid BaseUri, KnowledgeBaseId and EndpointKey not provided. Use QnAMakerServiceAttribute or set fields on QnAMakerDialog");
             }
 
             context.Wait(MessageReceived);
@@ -93,7 +98,7 @@ namespace QnAMakerDialog
 
         private async Task HandleMessage(IDialogContext context, string queryText)
         {
-            var response = await GetQnAMakerResponse(queryText, KnowledgeBaseId, SubscriptionKey);
+            var response = await GetQnAMakerResponse(queryText, BaseUri, KnowledgeBaseId, EndpointKey);
 
             if (HandlerByMaximumScore == null)
             {
@@ -121,15 +126,15 @@ namespace QnAMakerDialog
             }
         }
 
-        private async Task<QnAMakerResult> GetQnAMakerResponse(string query, string knowledgeBaseId, string subscriptionKey)
+        private async Task<QnAMakerResult> GetQnAMakerResponse(string query, string baseUri, string knowledgeBaseId, string endpointKey)
         {
             string responseString;
-
+            var qnamakerBaseUri = baseUri;
             var knowledgebaseId = knowledgeBaseId; // Use knowledge base id created.
-            var qnamakerSubscriptionKey = subscriptionKey; //Use subscription key assigned to you.
+            var qnamakerEndpointKey = endpointKey; //Use endpoint key assigned to you.
 
             //Build the URI
-            var qnamakerUriBase = new Uri("https://westus.api.cognitive.microsoft.com/qnamaker/v3.0");
+            var qnamakerUriBase = new Uri(qnamakerBaseUri);
             var builder = new UriBuilder($"{qnamakerUriBase}/knowledgebases/{knowledgebaseId}/generateAnswer");
 
             //Add the question as part of the body
@@ -152,7 +157,7 @@ namespace QnAMakerDialog
                 client.Encoding = System.Text.Encoding.UTF8;
 
                 //Add the subscription key header
-                client.Headers.Add("Ocp-Apim-Subscription-Key", qnamakerSubscriptionKey);
+                client.Headers.Add("Authorization", $"EndpointKey {qnamakerEndpointKey}");
                 client.Headers.Add("Content-Type", "application/json");
                 responseString = client.UploadString(builder.Uri, postBody);
             }
@@ -278,16 +283,18 @@ namespace QnAMakerDialog
     [Serializable]
     public class QnAMakerServiceAttribute : Attribute
     {
-        public string SubscriptionKey { get; set; }
+        public string BaseUri { get; set; }
+        public string EndpointKey { get; set; }
         public string KnowledgeBaseId { get; set; }
         public int MaxAnswers { get; set; }
         public List<Metadata> MetadataBoost { get; set; }
         public List<Metadata> MetadataFilter { get; set; }
 
-        public QnAMakerServiceAttribute(string subscriptionKey, string knowledgeBaseId, int maxAnswers = 5)
+        public QnAMakerServiceAttribute(string baseUri, string endpointKey, string knowledgeBaseId, int maxAnswers = 5)
         {
+            BaseUri = baseUri;
             MaxAnswers = maxAnswers;
-            SubscriptionKey = subscriptionKey;
+            EndpointKey = endpointKey;
             KnowledgeBaseId = knowledgeBaseId;
         }
     }
