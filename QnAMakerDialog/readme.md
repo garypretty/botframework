@@ -1,4 +1,4 @@
-﻿## QnAMakerDialog (updated to work with QnA Maker v3 API)
+﻿## QnAMakerDialog (updated to work with GA QnA Maker Service (v3.1) if you are still using preview version of QnA Maker service use v3.0 of the NuGet package)
 
 NuGet package: https://www.nuget.org/packages/QnAMakerDialog/ 
 
