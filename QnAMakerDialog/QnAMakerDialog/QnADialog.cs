@@ -106,7 +106,7 @@ namespace QnAMakerDialog
                     new Dictionary<QnAMakerResponseHandlerAttribute, QnAMakerResponseHandler>(GetHandlersByMaximumScore());
             }
 
-            if (response.Answers.Any() && response.Answers.First().QnaId == -1)
+            if (response.Answers.Any() && (response.Answers.First().QnaId == -1 || response.Answers.First().QnaId == 0))
             {
                 await NoMatchHandler(context, queryText);
             }
